@@ -35,19 +35,28 @@ app.post('/store', function (req, res) {
         namespace: "c318e388-76c3-4b32-85ac-7e7a5ee08c63",
         name: name
     }, function (err, result) {
-        console.log("Generated a name-based UUID using MD5:\n\t%s\n", result);
+        // Generated a name-based UUID using MD5 in 'result'
         var blobfile = path.join(__dirname, 'blobs', result);
-        fs.writeFile(blobfile, json, function (err) {
+        fs.writeFile(blobfile, JSON.stringify(json), function (err) {
             if (err) {
                 return console.log(err);
             }
-            console.log("Saved: " + name + " as " + result);
+            res.send("Saved: '" + name + "' as " + result);
         });
     });
-    res.send("OK\n");
+});
+
+app.get('/retrieve', function (req, res) {
 });
 
 app.get('/retrieve/:name', function (req, res) {
+    UUID.v3({
+        namespace: "c318e388-76c3-4b32-85ac-7e7a5ee08c63",
+        name: req.params.name
+    }, function (err, result) {
+        var blobfile = path.join(__dirname, 'blobs', result);
+        res.sendFile(blobfile);
+    });
 });
 
 app.listen(3000, function () {
