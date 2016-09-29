@@ -6,7 +6,6 @@ var bodyParser = require('body-parser')
 var UUID = require('uuid-1345');
 var mustache = require('mustache');
 
-//app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/*+json' }))
 app.use(bodyParser.urlencoded({ type: 'application/x-www-form-urlencoded', extended: false }))
 
