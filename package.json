@@ -1,0 +1,19 @@
+{
+  "name": "blob_service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ss73/kds-blob_service.git"
+  },
+  "author": "Stellan Söderström",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ss73/kds-blob_service/issues"
+  },
+  "homepage": "https://github.com/ss73/kds-blob_service#readme"
+}
