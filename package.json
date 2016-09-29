@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ss73/kds-blob_service/issues"
   },
-  "homepage": "https://github.com/ss73/kds-blob_service#readme"
+  "homepage": "https://github.com/ss73/kds-blob_service#readme",
+  "dependencies": {
+    "uuid-1345": "^0.99.6"
+  }
 }
