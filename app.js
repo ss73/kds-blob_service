@@ -49,17 +49,27 @@ app.post('/store', function (req, res) {
 app.get('/retrieve', function (req, res) {
     fs.readdir(path.join(__dirname, 'blobs'), function (err, files) {
         var presentation = [];
-        var template = "<ul>{{#rows}}<li>{{filename}}</li>{{/rows}}</ul>";
+        var template = "<ul>{{#rows}}<li><a href='{{filename}}'>{{filename}}</a></li>{{/rows}}</ul>";
         for (i in files) {
             presentation.push({ filename: files[i] });
         }
         var view = { rows: presentation };
         var html = mustache.to_html(template, view);
         res.send(html);
-    });    
+    });
 });
 
 app.get('/retrieve/:name', function (req, res) {
+    var uuid;
+    if (req.params.name.length == 36) {
+        try {
+            uuid = new UUID(req.params.name);
+            res.sendFile(path.join(__dirname, 'blobs', req.params.name));
+        }
+        catch (err) {
+            console.log("Not a UUID, trying name lookup");
+        }
+    }
     UUID.v3({
         namespace: "c318e388-76c3-4b32-85ac-7e7a5ee08c63",
         name: req.params.name
@@ -67,6 +77,7 @@ app.get('/retrieve/:name', function (req, res) {
         var blobfile = path.join(__dirname, 'blobs', result);
         res.sendFile(blobfile);
     });
+
 });
 
 app.listen(3000, function () {
