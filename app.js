@@ -16,15 +16,23 @@ app.get('/store', function(req, res) {
     res.sendFile(path.join(__dirname, 'views/store.html'));
 }); 
 
-app.post('/store/:data', function(req, res) {
+app.post('/store', function(req, res) {
+    var json;
     console.log('Request type: ' + req.type);
-    var json = req.body;
-    var id = json.id;
-    var title = json.title;
+    if(req.type == 'application/x-www-form-urlencoded') {
+        json = {
+            name : req.body.name,
+            content : req.body.content};
+    }
+    else {
+        json = req.body;
+    }
+    var name = json.name;
+    
     res.send("OK\n");
 });
 
-app.get('/retrieve/:query', function(req, res){
+app.get('/retrieve/:name', function(req, res){
 });
 
 app.listen(3000, function () {
