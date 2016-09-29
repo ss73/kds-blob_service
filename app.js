@@ -49,7 +49,7 @@ app.post('/store', function (req, res) {
 app.get('/retrieve', function (req, res) {
     fs.readdir(path.join(__dirname, 'blobs'), function (err, files) {
         var presentation = [];
-        var template = "<ul>{{#rows}}<li><a href='{{filename}}'>{{filename}}</a></li>{{/rows}}</ul>";
+        var template = "<ul>{{#rows}}<li><a href='/retrieve/{{filename}}'>{{filename}}</a></li>{{/rows}}</ul>";
         for (i in files) {
             presentation.push({ filename: files[i] });
         }
