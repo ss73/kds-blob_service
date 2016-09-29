@@ -4,6 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var bodyParser = require('body-parser')
 var UUID = require('uuid-1345');
+var mustache = require('mustache');
 
 //app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/*+json' }))
@@ -47,6 +48,16 @@ app.post('/store', function (req, res) {
 });
 
 app.get('/retrieve', function (req, res) {
+    fs.readdir(path.join(__dirname, 'blobs'), function (err, files) {
+        var presentation = [];
+        var template = "<ul>{{#rows}}<li>{{filename}}</li>{{/rows}}</ul>";
+        for (i in files) {
+            presentation.push({ filename: files[i] });
+        }
+        var view = { rows: presentation };
+        var html = mustache.to_html(template, view);
+        res.send(html);
+    });    
 });
 
 app.get('/retrieve/:name', function (req, res) {
