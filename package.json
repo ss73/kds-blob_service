@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ss73/kds-blob_service#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "uuid-1345": "^0.99.6"
   }
 }
