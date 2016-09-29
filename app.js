@@ -19,8 +19,9 @@ app.get('/store', function (req, res) {
 
 app.post('/store', function (req, res) {
     var json;
-    console.log('Request type: ' + req.type);
-    if (req.type == 'application/x-www-form-urlencoded') {
+    console.log('Request type: ' + req.headers['content-type']);
+    if (req.headers['content-type'] == 'application/x-www-form-urlencoded') {
+        console.log("Build JSON from form data");
         json = {
             name: req.body.name,
             content: req.body.content
@@ -31,10 +32,17 @@ app.post('/store', function (req, res) {
     }
     var name = json.name;
     UUID.v3({
-        namespace: UUID.blob_service,
+        namespace: "c318e388-76c3-4b32-85ac-7e7a5ee08c63",
         name: name
     }, function (err, result) {
         console.log("Generated a name-based UUID using MD5:\n\t%s\n", result);
+        var blobfile = path.join(__dirname, 'blobs', result);
+        fs.writeFile(blobfile, json, function (err) {
+            if (err) {
+                return console.log(err);
+            }
+            console.log("Saved: " + name + " as " + result);
+        });
     });
     res.send("OK\n");
 });
