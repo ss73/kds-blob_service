@@ -6,8 +6,17 @@ var bodyParser = require('body-parser')
 var UUID = require('uuid-1345');
 var mustache = require('mustache');
 
-app.use(bodyParser.json({ type: 'application/*+json' }))
-app.use(bodyParser.urlencoded({ type: 'application/x-www-form-urlencoded', extended: false }))
+app.use(function (req, res, next) {
+    var content_type = req.headers['content-type'];
+    if (content_type != null && content_type.startsWith('application/x-www-form-urlencoded')) {
+        req.url = "/form" + req.url;
+        console.log("New 'virtual' URL: " + req.url);
+    }
+    next();
+});
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'views/info.html'));
@@ -17,23 +26,26 @@ app.get('/store', function (req, res) {
     res.sendFile(path.join(__dirname, 'views/store.html'));
 });
 
+// Virtual URL used when posting a form, URL is prepended with /form/
+app.post('/form/store', function (req, res) {
+    console.log(req.body);
+    var json = {
+        name: req.body.name,
+        content: req.body.content
+    };
+    res.send(store(json));
+});
+
 app.post('/store', function (req, res) {
-    var json;
-    console.log('Request type: ' + req.headers['content-type']);
-    if (req.headers['content-type'] == 'application/x-www-form-urlencoded') {
-        console.log("Build JSON from form data");
-        json = {
-            name: req.body.name,
-            content: req.body.content
-        };
-    }
-    else {
-        json = req.body;
-    }
-    var name = json.name;
+    var json = req.body;
+    console.log(json);
+    res.send(store(json));
+});
+
+function store(json) {
     UUID.v3({
         namespace: "c318e388-76c3-4b32-85ac-7e7a5ee08c63",
-        name: name
+        name: json.name
     }, function (err, result) {
         // Generated a name-based UUID using MD5 in 'result'
         var blobfile = path.join(__dirname, 'blobs', result);
@@ -41,10 +53,11 @@ app.post('/store', function (req, res) {
             if (err) {
                 return console.log(err);
             }
-            res.send("Saved: '" + name + "' as " + result);
+            return "Saved: '" + json.name + "' as " + result;
         });
     });
-});
+
+}
 
 app.get('/retrieve', function (req, res) {
     fs.readdir(path.join(__dirname, 'blobs'), function (err, files) {
@@ -81,5 +94,5 @@ app.get('/retrieve/:name', function (req, res) {
 });
 
 app.listen(3000, function () {
-    console.log('index access service listening on port 3000');
+    console.log('Blob service listening on port 3000');
 });
