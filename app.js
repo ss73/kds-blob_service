@@ -53,10 +53,11 @@ function store(json) {
             if (err) {
                 return console.log(err);
             }
-            return "Saved: '" + json.name + "' as " + result;
+            console.log("Saved: '" + json.name + "' as " + result);
+            return result;
         });
     });
-
+    return "success\n";
 }
 
 app.get('/retrieve', function (req, res) {
@@ -77,20 +78,23 @@ app.get('/retrieve/:name', function (req, res) {
     if (req.params.name.length == 36) {
         try {
             uuid = new UUID(req.params.name);
-            res.sendFile(path.join(__dirname, 'blobs', req.params.name));
+            var blobfile = path.join(__dirname, 'blobs', uuid);
+            console.log("Sending: " + blobfile);
+            res.sendFile(blobfile);
         }
         catch (err) {
             console.log("Not a UUID, trying name lookup");
         }
+    } else {
+        UUID.v3({
+            namespace: "c318e388-76c3-4b32-85ac-7e7a5ee08c63",
+            name: req.params.name
+        }, function (err, result) {
+            var blobfile = path.join(__dirname, 'blobs', result);
+            console.log("Sending: " + blobfile);
+            res.sendFile(blobfile);
+        });
     }
-    UUID.v3({
-        namespace: "c318e388-76c3-4b32-85ac-7e7a5ee08c63",
-        name: req.params.name
-    }, function (err, result) {
-        var blobfile = path.join(__dirname, 'blobs', result);
-        res.sendFile(blobfile);
-    });
-
 });
 
 app.listen(3000, function () {
