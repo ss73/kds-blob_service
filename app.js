@@ -101,5 +101,5 @@ app.get('/retrieve/:name', function (req, res) {
 });
 
 app.listen(32500, function () {
-    console.log('Blob service 1.0 listening on port 3000');
+    console.log('Blob service 1.0 listening on port 32500');
 });
