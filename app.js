@@ -38,7 +38,7 @@ app.post('/form/store', function (req, res) {
 
 app.post('/store', function (req, res) {
     var json = req.body;
-    console.log(json);
+    //console.log(json);
     res.send(store(json));
 });
 
@@ -49,7 +49,7 @@ function store(json) {
     }, function (err, result) {
         // Generated a name-based UUID using MD5 in 'result'
         var blobfile = path.join(__dirname, 'blobs', result);
-        fs.writeFile(blobfile, JSON.stringify(json), function (err) {
+        fs.writeFile(blobfile, Buffer.from(json.content, 'base64'), function (err) {
             if (err) {
                 return console.log(err);
             }
@@ -57,7 +57,7 @@ function store(json) {
             return result;
         });
     });
-    return "success\n";
+    return {status : "OK"};
 }
 
 app.get('/retrieve', function (req, res) {
@@ -75,21 +75,24 @@ app.get('/retrieve', function (req, res) {
 
 app.get('/retrieve/:name', function (req, res) {
     var uuid;
+    console.log(req.params.name);
     if (req.params.name.length == 36) {
         try {
             uuid = new UUID(req.params.name);
-            var blobfile = path.join(__dirname, 'blobs', uuid);
+            console.log("UUID: " + uuid);
+            var blobfile = path.join(__dirname, 'blobs', uuid.toString());
             console.log("Sending: " + blobfile);
             res.sendFile(blobfile);
         }
         catch (err) {
-            console.log("Not a UUID, trying name lookup");
+            console.log("Failed UUID lookup, trying name lookup" + err);
         }
     } else {
         UUID.v3({
             namespace: "c318e388-76c3-4b32-85ac-7e7a5ee08c63",
             name: req.params.name
         }, function (err, result) {
+            if(err) return console.log(err);
             var blobfile = path.join(__dirname, 'blobs', result);
             console.log("Sending: " + blobfile);
             res.sendFile(blobfile);
@@ -97,6 +100,6 @@ app.get('/retrieve/:name', function (req, res) {
     }
 });
 
-app.listen(3000, function () {
+app.listen(32500, function () {
     console.log('Blob service 1.0 listening on port 3000');
 });
