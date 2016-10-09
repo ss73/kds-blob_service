@@ -15,7 +15,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', function (req, res) {
@@ -98,5 +98,5 @@ app.get('/retrieve/:name', function (req, res) {
 });
 
 app.listen(3000, function () {
-    console.log('Blob service listening on port 3000');
+    console.log('Blob service 1.0 listening on port 3000');
 });
